@@ -1,31 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Feedback Form</title>
+    <title>Favorite Food</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h2>Feedback</h2>
+    <h2>Tell Us About Your Favorite Food</h2>
     <form action="SUBMIT" method="POST">
         <label for="name">Your Name:</label>
         <input type="text" id="name" name="name" required>
 
-        <label for="email">Your Email:</label>
-        <input type="email" id="email" name="email" required>
+        <label for="fav-food">Favorite Food:</label>
+        <input type="text" id="fav-food" name="fav_food" required>
 
-        <label for="rating">Rate Our Service:</label>
-        <select id="rating" name="rating">
-            <option value="5">Excellent</option>
-            <option value="4">Good</option>
-            <option value="3">Average</option>
-            <option value="2">Below Average</option>
-            <option value="1">Poor</option>
+        <label for="cuisine">Preferred Cuisine:</label>
+        <select id="cuisine" name="cuisine">
+            <option value="italian">Italian</option>
+            <option value="mexican">Mexican</option>
+            <option value="indian">Indian</option>
+            <option value="chinese">Chinese</option>
+            <option value="japanese">Japanese</option>
+            <option value="other">Other</option>
         </select>
 
-        <label for="comments">Additional Comments:</label>
-        <textarea id="comments" name="comments" rows="4"></textarea>
+        <label for="why">Why do you love it?</label>
+        <textarea id="why" name="why" rows="4"></textarea>
 
-        <button type="submit">Submit Feedback</button>
+        <button type="submit">Submit</button>
     </form>
     <nav>
         <a href="index.html">Back to Home</a>
