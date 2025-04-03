@@ -1,0 +1,28 @@
+{
+  "name": "6",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u00005\u0000F\u0000o\u0000r\u0000m\u0000s\u0000\r\u0000 \u0000",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HrushikeshAM/5Forms.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HrushikeshAM/5Forms/issues"
+  },
+  "homepage": "https://github.com/HrushikeshAM/5Forms#readme",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mssql": "^11.0.1"
+  }
+}
