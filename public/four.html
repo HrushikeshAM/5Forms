@@ -1,41 +1,58 @@
-<form id="foodForm">
-    <label for="name">Your Name:</label>
-    <input type="text" id="name" name="name" required>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Favorite Food</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <form id="foodForm">
+        <h2>Favorite Food</h2>
+        <label for="name">Your Name:</label>
+        <input type="text" id="name" name="name" required>
 
-    <label for="fav-food">Favorite Food:</label>
-    <input type="text" id="fav-food" name="fav_food" required>
+        <label for="fav-food">Favorite Food:</label>
+        <input type="text" id="fav-food" name="fav_food" required>
 
-    <label for="cuisine">Preferred Cuisine:</label>
-    <select id="cuisine" name="cuisine">
-        <option value="italian">Italian</option>
-        <option value="mexican">Mexican</option>
-        <option value="indian">Indian</option>
-        <option value="chinese">Chinese</option>
-        <option value="japanese">Japanese</option>
-        <option value="other">Other</option>
-    </select>
+        <label for="cuisine">Preferred Cuisine:</label>
+        <select id="cuisine" name="cuisine">
+            <option value="italian">Italian</option>
+            <option value="mexican">Mexican</option>
+            <option value="indian">Indian</option>
+            <option value="chinese">Chinese</option>
+            <option value="japanese">Japanese</option>
+            <option value="other">Other</option>
+        </select>
 
-    <label for="why">Why do you love it?</label>
-    <textarea id="why" name="why" rows="4"></textarea>
+        <label for="why">Why do you love it?</label>
+        <textarea id="why" name="why" rows="4"></textarea>
 
-    <button type="submit">Submit</button>
-</form>
+        <button type="submit">Submit</button>
+    </form>
 
-<script>
-document.getElementById("foodForm").addEventListener("submit", async function(event) {
-    event.preventDefault();
-    const name = document.getElementById("name").value;
-    const fav_food = document.getElementById("fav-food").value;
-    const cuisine = document.getElementById("cuisine").value;
-    const why = document.getElementById("why").value;
+    <div class="nav-buttons">
+        <a href="three.html">⬅ Back</a>
+        <a href="five.html">Next ➡</a>
+    </div>
 
-    const response = await fetch("http://localhost:3000/favorite-food", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, fav_food, cuisine, why })
-    });
+    <script>
+        document.getElementById("foodForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const name = document.getElementById("name").value;
+            const fav_food = document.getElementById("fav-food").value;
+            const cuisine = document.getElementById("cuisine").value;
+            const why = document.getElementById("why").value;
+            const apiUrl = window.location.origin;
 
-    const data = await response.json();
-    alert(data.message);
-});
-</script>
+            const response = await fetch(`${apiUrl}/favorite-food`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, fav_food, cuisine, why })
+            });
+
+            const data = await response.json();
+            alert(data.message);
+        });
+    </script>
+</body>
+</html>

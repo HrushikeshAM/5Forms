@@ -1,34 +1,47 @@
-<form id="signupForm">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username" required>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Signup Form</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <form id="signupForm">
+        <h2>Signup</h2>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
 
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
 
-    <button type="submit">Sign Up</button>
-</form>
+        <button type="submit">Sign Up</button>
+    </form>
 
-<script>
-    document.getElementById("signupForm").addEventListener("submit", async function(event) {
-        event.preventDefault();
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
-    
-        try {
-            const response = await fetch("http://localhost:3000/signup", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password })
-            });
-    
-            const data = await response.json();
-            if (data.success) {
-                alert("✅ " + data.message);
-            } else {
-                alert("❌ " + data.message);
+    <div class="nav-buttons">
+        <a href="index.html">⬅ Back to Home</a>
+        <a href="two.html">Next ➡</a>
+    </div>
+
+    <script>
+        document.getElementById("signupForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const apiUrl = window.location.origin;
+
+            try {
+                const response = await fetch(`${apiUrl}/signup`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+                alert(data.success ? "✅ " + data.message : "❌ " + data.message);
+            } catch (error) {
+                alert("❌ Server error: " + error.message);
             }
-        } catch (error) {
-            alert("❌ Server error: " + error.message);
-        }
-    });
-</script>
+        });
+    </script>
+</body>
+</html>
