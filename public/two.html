@@ -40,7 +40,7 @@
             const age = document.getElementById("age").value;
             const satisfaction = document.querySelector('input[name="satisfaction"]:checked').value;
 
-            const response = await fetch("http://localhost:5000/survey", {
+            const response = await fetch("https://ccexp6.azurewebsites.net/survey", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ age, satisfaction })

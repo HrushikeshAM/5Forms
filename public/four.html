@@ -46,7 +46,7 @@
             const cuisine = document.getElementById("cuisine").value;
             const reason = document.getElementById("why").value;
 
-            const response = await fetch("http://localhost:5000/food", {
+            const response = await fetch("https://ccexp6.azurewebsites.net/food", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name, fav_food, cuisine, reason })
