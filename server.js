@@ -3,6 +3,7 @@ const express = require("express");
 const sql = require("mssql");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
+const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -11,6 +12,9 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cors());
 
+// Serve static files from the "public" folder
+app.use(express.static(path.join(__dirname, "public")));
+
 // Database Configuration
 const dbConfig = {
     user: process.env.DB_USER,
@@ -18,7 +22,7 @@ const dbConfig = {
     server: process.env.DB_SERVER,
     database: process.env.DB_DATABASE,
     options: {
-        encrypt: process.env.DB_ENCRYPT === "true",
+        encrypt: process.env.DB_ENCRYPT === "true", // true for Azure SQL
         trustServerCertificate: process.env.DB_TRUST_SERVER_CERTIFICATE === "true",
     }
 };
@@ -28,7 +32,7 @@ sql.connect(dbConfig)
     .then(() => console.log("✅ Connected to DB"))
     .catch(err => console.error("❌ DB Connection Failed:", err));
 
-// Route 1: Sign Up Form (one.html)
+// Route 1: Sign Up Form
 app.post("/signup", async (req, res) => {
     const { username, password } = req.body;
     try {
@@ -40,7 +44,7 @@ app.post("/signup", async (req, res) => {
     }
 });
 
-// Route 2: Survey Form (two.html)
+// Route 2: Survey Form
 app.post("/survey", async (req, res) => {
     const { age, satisfaction } = req.body;
     try {
@@ -51,7 +55,7 @@ app.post("/survey", async (req, res) => {
     }
 });
 
-// Route 3: Contact Form (three.html)
+// Route 3: Contact Form
 app.post("/contact", async (req, res) => {
     const { name, email, message } = req.body;
     try {
@@ -62,7 +66,7 @@ app.post("/contact", async (req, res) => {
     }
 });
 
-// Route 4: Food Form (four.html)
+// Route 4: Food Form
 app.post("/food", async (req, res) => {
     const { name, fav_food, cuisine, reason } = req.body;
     try {
@@ -73,7 +77,7 @@ app.post("/food", async (req, res) => {
     }
 });
 
-// Route 5: Feedback Form (five.html)
+// Route 5: Feedback Form
 app.post("/feedback", async (req, res) => {
     const { name, email, rating, comments } = req.body;
     try {
@@ -82,6 +86,11 @@ app.post("/feedback", async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
+});
+
+// Fallback route for root URL
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 // Start Server
