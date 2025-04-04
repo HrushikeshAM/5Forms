@@ -1,4 +1,6 @@
 require("dotenv").config(); // Load environment variables
+app.use(express.static("public"));
+
 
 const express = require("express");
 const sql = require("mssql");
