@@ -1,137 +1,88 @@
-require("dotenv").config(); // Load environment variables
-app.use(express.static("public"));
-
-
+require("dotenv").config();
 const express = require("express");
 const sql = require("mssql");
-const bodyParser = require("body-parser");
 const cors = require("cors");
+const bcrypt = require("bcrypt");
 
 const app = express();
-const port = process.env.PORT || 3000; // Use environment variable
+const PORT = process.env.PORT || 5000;
 
-app.use(bodyParser.json());
+// Middleware
+app.use(express.json());
 app.use(cors());
 
-// Azure SQL Configuration
+// Database Configuration
 const dbConfig = {
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  server: process.env.DB_SERVER,
-  database: process.env.DB_DATABASE,
-  options: {
-    encrypt: true,
-    enableArithAbort: true,
-  }
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    server: process.env.DB_SERVER,
+    database: process.env.DB_DATABASE,
+    options: {
+        encrypt: process.env.DB_ENCRYPT === "true",
+        trustServerCertificate: process.env.DB_TRUST_SERVER_CERTIFICATE === "true",
+    }
 };
 
-// Connect to Azure SQL
+// Connect to Database
 sql.connect(dbConfig)
-  .then(() => console.log("Connected to Azure SQL Database"))
-  .catch(err => console.log("Database connection failed: ", err));
+    .then(() => console.log("✅ Connected to DB"))
+    .catch(err => console.error("❌ DB Connection Failed:", err));
 
-// Create a request object for queries
-const pool = new sql.ConnectionPool(dbConfig);
-const poolConnect = pool.connect();
-
-// API Routes
-
-// 1️⃣ Login API
+// Route 1: Sign Up Form (one.html)
 app.post("/signup", async (req, res) => {
     const { username, password } = req.body;
     try {
-      await poolConnect;
-      const userExists = await pool.request()
-        .input("username", sql.VarChar, username)
-        .query("SELECT * FROM Users WHERE username = @username");
-  
-      if (userExists.recordset.length > 0) {
-        return res.json({ success: false, message: "Username already exists." });
-      }
-  
-      await pool.request()
-        .input("username", sql.VarChar, username)
-        .input("password", sql.VarChar, password)
-        .query("INSERT INTO Users (username, password_hash) VALUES (@username, @password)");
-  
-      res.json({ success: true, message: "Signup successful!" });
-    } catch (err) {
-      res.status(500).json({ success: false, message: "Server error: " + err.message });
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await sql.query`INSERT INTO Users (username, password_hash) VALUES (${username}, ${hashedPassword})`;
+        res.json({ message: "User registered successfully!" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
-  });
-  
-  
+});
 
-// 2️⃣ Survey API
+// Route 2: Survey Form (two.html)
 app.post("/survey", async (req, res) => {
-  const { age, satisfaction } = req.body;
-  try {
-    await poolConnect;
-    await pool.request()
-      .input("age", sql.Int, age)
-      .input("satisfaction", sql.VarChar, satisfaction)
-      .query("INSERT INTO Survey (age, satisfaction) VALUES (@age, @satisfaction)");
-
-    res.json({ success: true, message: "Survey submitted successfully!" });
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
+    const { age, satisfaction } = req.body;
+    try {
+        await sql.query`INSERT INTO Survey (age, satisfaction) VALUES (${age}, ${satisfaction})`;
+        res.json({ message: "Survey submitted successfully!" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
-// 3️⃣ Contact API
+// Route 3: Contact Form (three.html)
 app.post("/contact", async (req, res) => {
-  const { name, email, message } = req.body;
-  try {
-    await poolConnect;
-    await pool.request()
-      .input("name", sql.VarChar, name)
-      .input("email", sql.VarChar, email)
-      .input("message", sql.Text, message)
-      .query("INSERT INTO Contact (name, email, message) VALUES (@name, @email, @message)");
-
-    res.json({ success: true, message: "Message sent successfully!" });
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
+    const { name, email, message } = req.body;
+    try {
+        await sql.query`INSERT INTO Contact (name, email, message) VALUES (${name}, ${email}, ${message})`;
+        res.json({ message: "Contact form submitted!" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
-// 4️⃣ Favorite Food API
-app.post("/favorite-food", async (req, res) => {
-  const { name, fav_food, cuisine, why } = req.body;
-  try {
-    await poolConnect;
-    await pool.request()
-      .input("name", sql.VarChar, name)
-      .input("fav_food", sql.VarChar, fav_food)
-      .input("cuisine", sql.VarChar, cuisine)
-      .input("why", sql.Text, why)
-      .query("INSERT INTO FavoriteFood (name, fav_food, cuisine, reason) VALUES (@name, @fav_food, @cuisine, @why)");
-
-    res.json({ success: true, message: "Favorite food submitted successfully!" });
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
+// Route 4: Food Form (four.html)
+app.post("/food", async (req, res) => {
+    const { name, fav_food, cuisine, reason } = req.body;
+    try {
+        await sql.query`INSERT INTO FavoriteFood (name, fav_food, cuisine, reason) VALUES (${name}, ${fav_food}, ${cuisine}, ${reason})`;
+        res.json({ message: "Food preference saved!" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
-// 5️⃣ Feedback API
+// Route 5: Feedback Form (five.html)
 app.post("/feedback", async (req, res) => {
-  const { name, email, rating, comments } = req.body;
-  try {
-    await poolConnect;
-    await pool.request()
-      .input("name", sql.VarChar, name)
-      .input("email", sql.VarChar, email)
-      .input("rating", sql.Int, rating)
-      .input("comments", sql.Text, comments)
-      .query("INSERT INTO Feedback (name, email, rating, comments) VALUES (@name, @email, @rating, @comments)");
-
-    res.json({ success: true, message: "Feedback submitted successfully!" });
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
+    const { name, email, rating, comments } = req.body;
+    try {
+        await sql.query`INSERT INTO Feedback (name, email, rating, comments) VALUES (${name}, ${email}, ${rating}, ${comments})`;
+        res.json({ message: "Feedback submitted!" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 // Start Server
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

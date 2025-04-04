@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signup Form</title>
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -17,6 +18,8 @@
         <button type="submit">Sign Up</button>
     </form>
 
+    <p id="message"></p>
+
     <div class="nav-buttons">
         <a href="index.html">⬅ Back to Home</a>
         <a href="two.html">Next ➡</a>
@@ -25,23 +28,27 @@
     <script>
         document.getElementById("signupForm").addEventListener("submit", async function(event) {
             event.preventDefault();
+
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
-            const apiUrl = window.location.origin;
 
-            try {
-                const response = await fetch(`${apiUrl}/signup`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ username, password })
-                });
+            const response = await fetch("http://localhost:5000/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password })
+            });
 
-                const data = await response.json();
-                alert(data.success ? "✅ " + data.message : "❌ " + data.message);
-            } catch (error) {
-                alert("❌ Server error: " + error.message);
+            const data = await response.json();
+            document.getElementById("message").textContent = data.message;
+
+            if (response.ok) {
+                alert("✅ Signup successful!");
+                window.location.href = "two.html";  // Redirect to the next page
+            } else {
+                alert("❌ Error: " + data.error);
             }
         });
     </script>
+
 </body>
 </html>

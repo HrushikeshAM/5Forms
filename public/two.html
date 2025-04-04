@@ -26,6 +26,8 @@
         <button type="submit">Submit</button>
     </form>
 
+    <p id="message"></p>
+
     <div class="nav-buttons">
         <a href="one.html">⬅ Back</a>
         <a href="three.html">Next ➡</a>
@@ -34,19 +36,27 @@
     <script>
         document.getElementById("surveyForm").addEventListener("submit", async function(event) {
             event.preventDefault();
+
             const age = document.getElementById("age").value;
             const satisfaction = document.querySelector('input[name="satisfaction"]:checked').value;
-            const apiUrl = window.location.origin;
 
-            const response = await fetch(`${apiUrl}/survey`, {
+            const response = await fetch("http://localhost:5000/survey", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ age, satisfaction })
             });
 
             const data = await response.json();
-            alert(data.message);
+            document.getElementById("message").textContent = data.message;
+
+            if (response.ok) {
+                alert("✅ Survey submitted successfully!");
+                window.location.href = "three.html";  // Redirect to the next page
+            } else {
+                alert("❌ Error: " + data.error);
+            }
         });
     </script>
+
 </body>
 </html>

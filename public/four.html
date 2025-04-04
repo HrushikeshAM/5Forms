@@ -30,6 +30,8 @@
         <button type="submit">Submit</button>
     </form>
 
+    <p id="messageOutput"></p>
+
     <div class="nav-buttons">
         <a href="three.html">⬅ Back</a>
         <a href="five.html">Next ➡</a>
@@ -38,21 +40,29 @@
     <script>
         document.getElementById("foodForm").addEventListener("submit", async function(event) {
             event.preventDefault();
+
             const name = document.getElementById("name").value;
             const fav_food = document.getElementById("fav-food").value;
             const cuisine = document.getElementById("cuisine").value;
-            const why = document.getElementById("why").value;
-            const apiUrl = window.location.origin;
+            const reason = document.getElementById("why").value;
 
-            const response = await fetch(`${apiUrl}/favorite-food`, {
+            const response = await fetch("http://localhost:5000/food", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, fav_food, cuisine, why })
+                body: JSON.stringify({ name, fav_food, cuisine, reason })
             });
 
             const data = await response.json();
-            alert(data.message);
+            document.getElementById("messageOutput").textContent = data.message;
+
+            if (response.ok) {
+                alert("✅ Favorite food details submitted successfully!");
+                window.location.href = "five.html";  // Redirect to the next page
+            } else {
+                alert("❌ Error: " + data.error);
+            }
         });
     </script>
+
 </body>
 </html>

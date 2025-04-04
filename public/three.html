@@ -20,6 +20,8 @@
         <button type="submit">Send</button>
     </form>
 
+    <p id="messageOutput"></p>
+
     <div class="nav-buttons">
         <a href="two.html">⬅ Back</a>
         <a href="four.html">Next ➡</a>
@@ -28,20 +30,28 @@
     <script>
         document.getElementById("contactForm").addEventListener("submit", async function(event) {
             event.preventDefault();
+
             const name = document.getElementById("name").value;
             const email = document.getElementById("email").value;
             const message = document.getElementById("message").value;
-            const apiUrl = window.location.origin;
 
-            const response = await fetch(`${apiUrl}/contact`, {
+            const response = await fetch("http://localhost:5000/contact", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name, email, message })
             });
 
             const data = await response.json();
-            alert(data.message);
+            document.getElementById("messageOutput").textContent = data.message;
+
+            if (response.ok) {
+                alert("✅ Contact message sent successfully!");
+                window.location.href = "four.html";  // Redirect to the next page
+            } else {
+                alert("❌ Error: " + data.error);
+            }
         });
     </script>
+
 </body>
 </html>

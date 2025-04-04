@@ -8,6 +8,7 @@
 <body>
     <form id="feedbackForm">
         <h2>Feedback</h2>
+
         <label for="name">Your Name:</label>
         <input type="text" id="name" name="name" required>
 
@@ -15,7 +16,8 @@
         <input type="email" id="email" name="email" required>
 
         <label for="rating">Rate Our Service:</label>
-        <select id="rating" name="rating">
+        <select id="rating" name="rating" required>
+            <option value="">--Select--</option>
             <option value="5">Excellent</option>
             <option value="4">Good</option>
             <option value="3">Average</option>
@@ -29,6 +31,8 @@
         <button type="submit">Submit Feedback</button>
     </form>
 
+    <p id="feedbackMsg" style="color: green; font-weight: bold;"></p>
+
     <div class="nav-buttons">
         <a href="four.html">⬅ Back</a>
         <a href="index.html">🏠 Home</a>
@@ -37,20 +41,31 @@
     <script>
         document.getElementById("feedbackForm").addEventListener("submit", async function(event) {
             event.preventDefault();
+
+            console.log("Submitting feedback form...");
+
             const name = document.getElementById("name").value;
             const email = document.getElementById("email").value;
             const rating = document.getElementById("rating").value;
             const comments = document.getElementById("comments").value;
-            const apiUrl = window.location.origin;
 
-            const response = await fetch(`${apiUrl}/feedback`, {
+            const response = await fetch("http://localhost:5000/feedback", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name, email, rating, comments })
             });
 
             const data = await response.json();
-            alert(data.message);
+            const msgEl = document.getElementById("feedbackMsg");
+
+            if (response.ok) {
+                msgEl.textContent = "✅ Thank you for your feedback!";
+                msgEl.style.color = "green";
+                document.getElementById("feedbackForm").reset();
+            } else {
+                msgEl.textContent = "❌ Error: " + data.error;
+                msgEl.style.color = "red";
+            }
         });
     </script>
 </body>
